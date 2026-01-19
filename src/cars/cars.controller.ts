@@ -26,7 +26,7 @@ export class CarsController {
   }
 
   @Post()
-  createCar(@Param('id', ParseUUIDPipe) id: string, @Body() body: object) {
+  createCar(@Body() body: object) {
     return body;
   }
 
