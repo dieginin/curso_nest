@@ -2,6 +2,6 @@ export class Brand {
   id: string;
   name: string;
 
-  createdAy: number;
+  createdAt: number;
   updatedAt?: number;
 }

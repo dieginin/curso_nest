@@ -7,7 +7,7 @@ import { v4 as uuid } from 'uuid';
 @Injectable()
 export class BrandsService {
   private brands: Brand[] = [
-    { id: uuid(), name: 'toyota', createdAy: new Date().getTime() },
+    { id: uuid(), name: 'toyota', createdAt: new Date().getTime() },
   ];
 
   create(createBrandDto: CreateBrandDto) {
@@ -16,7 +16,7 @@ export class BrandsService {
     const brand: Brand = {
       id: uuid(),
       name: name.toLocaleLowerCase(),
-      createdAy: new Date().getTime(),
+      createdAt: new Date().getTime(),
     };
     this.brands.push(brand);
 
