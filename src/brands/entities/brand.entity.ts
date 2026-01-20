@@ -1,1 +1,7 @@
-export class Brand {}
+export class Brand {
+  id: string;
+  name: string;
+
+  createdAy: number;
+  updatedAt?: number;
+}
