@@ -1,4 +1,4 @@
-import { CreateCarDto, UpdateCarDto } from './dtos';
+import { CreateCarDto, UpdateCarDto } from './dto';
 import { Injectable, NotFoundException } from '@nestjs/common';
 
 import { Car } from './interfaces/car.interface';
