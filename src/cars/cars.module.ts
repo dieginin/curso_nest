@@ -5,5 +5,6 @@ import { Module } from '@nestjs/common';
 @Module({
   controllers: [CarsController],
   providers: [CarsService],
+  exports: [CarsService],
 })
 export class CarsModule {}
