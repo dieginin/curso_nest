@@ -23,23 +23,7 @@ export class PokemonService {
       const pokemon = await this.pokemonModel.create(createPokemonDto);
       return pokemon;
     } catch (error) {
-      if (error instanceof Error && 'code' in error && error.code === 11000) {
-        const mongoError = error as Error & {
-          code: number;
-          keyPattern: Record<string, unknown>;
-          keyValue: Record<string, unknown>;
-        };
-
-        throw new ConflictException(
-          `Pokemon with ${Object.keys(mongoError.keyPattern).join(', ')}: ${Object.values(
-            mongoError.keyValue,
-          ).join(', ')} already exists`,
-        );
-      }
-
-      throw new InternalServerErrorException(
-        "Can't create pokemon - Check server logs",
-      );
+      this.handleExceptions(error);
     }
   }
 
@@ -78,11 +62,35 @@ export class PokemonService {
       updatePokemonDto.name = updatePokemonDto.name.toLowerCase();
     }
 
-    await pokemon.updateOne(updatePokemonDto, { new: true });
-    return { ...pokemon.toJSON(), ...updatePokemonDto } as Pokemon;
+    try {
+      await pokemon.updateOne(updatePokemonDto, { new: true });
+      return { ...pokemon.toJSON(), ...updatePokemonDto } as Pokemon;
+    } catch (error) {
+      this.handleExceptions(error);
+    }
   }
 
   remove(id: number) {
     return `This action removes a #${id} pokemon`;
+  }
+
+  private handleExceptions(error: any) {
+    if (error instanceof Error && 'code' in error && error.code === 11000) {
+      const mongoError = error as Error & {
+        code: number;
+        keyPattern: Record<string, unknown>;
+        keyValue: Record<string, unknown>;
+      };
+
+      throw new ConflictException(
+        `Pokemon with ${Object.keys(mongoError.keyPattern).join(', ')}: ${Object.values(
+          mongoError.keyValue,
+        ).join(', ')} already exists`,
+      );
+    }
+
+    throw new InternalServerErrorException(
+      "Can't create pokemon - Check server logs",
+    );
   }
 }
