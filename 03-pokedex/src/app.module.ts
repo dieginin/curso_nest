@@ -1,3 +1,4 @@
+import { CommonModule } from './common/common.module';
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { PokemonModule } from './pokemon/pokemon.module';
@@ -11,6 +12,7 @@ import { join } from 'path';
       rootPath: join(__dirname, '..', 'public'),
     }),
     PokemonModule,
+    CommonModule,
   ],
 })
 export class AppModule {}
