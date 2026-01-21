@@ -15,16 +15,19 @@ export class SeedService {
   ) {}
 
   async executeSeed() {
+    await this.pokemonModel.deleteMany();
+
     const {
       data: { results },
     } = await firstValueFrom(
-      this.httpService.get<PokeResponse>('pokemon?limit=10'),
+      this.httpService.get<PokeResponse>('pokemon?limit=650'),
     );
 
-    results.forEach(({ name, url }) => {
-      const no = Number(url.split('/').at(-2));
-      this.pokemonModel.create({ name, no }).catch(() => {});
-    });
+    const pokemonList = results.map(({ name, url }) => ({
+      name,
+      no: Number(url.split('/').at(-2)),
+    }));
+    await this.pokemonModel.insertMany(pokemonList);
 
     return 'Seed Executed';
   }
