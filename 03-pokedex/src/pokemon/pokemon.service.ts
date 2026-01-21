@@ -1,6 +1,10 @@
 import { CreatePokemonDto, UpdatePokemonDto } from './dto';
 
-import { Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { Model } from 'mongoose';
 import { Pokemon } from './entities/pokemon.entity';
 import { InjectModel } from '@nestjs/mongoose';
@@ -14,8 +18,28 @@ export class PokemonService {
 
   async create(createPokemonDto: CreatePokemonDto) {
     createPokemonDto.name = createPokemonDto.name.toLocaleLowerCase();
-    const pokemon = await this.pokemonModel.create(createPokemonDto);
-    return pokemon;
+    try {
+      const pokemon = await this.pokemonModel.create(createPokemonDto);
+      return pokemon;
+    } catch (error) {
+      if (error instanceof Error && 'code' in error && error.code === 11000) {
+        const mongoError = error as Error & {
+          code: number;
+          keyPattern: Record<string, unknown>;
+          keyValue: Record<string, unknown>;
+        };
+
+        throw new ConflictException(
+          `Pokemon with ${Object.keys(mongoError.keyPattern).join(', ')}: ${Object.values(
+            mongoError.keyValue,
+          ).join(', ')} already exists`,
+        );
+      }
+
+      throw new InternalServerErrorException(
+        "Can't create pokemon - Check server logs",
+      );
+    }
   }
 
   findAll() {
