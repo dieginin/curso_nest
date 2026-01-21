@@ -1,27 +1,22 @@
-import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
 import { PokeResponse } from './interfaces/poke.response';
-import { firstValueFrom } from 'rxjs';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Pokemon } from '../pokemon/entities/pokemon.entity';
+import { AxiosAdapter } from 'src/common/adapters/axios.adapter';
 
 @Injectable()
 export class SeedService {
   constructor(
     @InjectModel(Pokemon.name)
     private readonly pokemonModel: Model<Pokemon>,
-    private readonly httpService: HttpService,
+    private readonly http: AxiosAdapter,
   ) {}
 
   async executeSeed() {
     await this.pokemonModel.deleteMany();
 
-    const {
-      data: { results },
-    } = await firstValueFrom(
-      this.httpService.get<PokeResponse>('pokemon?limit=650'),
-    );
+    const { results } = await this.http.get<PokeResponse>('pokemon?limit=650');
 
     const pokemonList = results.map(({ name, url }) => ({
       name,
