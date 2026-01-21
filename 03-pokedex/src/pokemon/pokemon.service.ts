@@ -28,7 +28,7 @@ export class PokemonService {
   }
 
   async findAll() {
-    return await this.pokemonModel.find();
+    return await this.pokemonModel.find().limit(5).skip(5);
   }
 
   async findOne(term: string) {
