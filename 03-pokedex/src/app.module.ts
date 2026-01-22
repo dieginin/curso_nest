@@ -15,7 +15,7 @@ import { join } from 'path';
       load: [AppConfig],
       validationSchema: JoiValidationSchema,
     }),
-    MongooseModule.forRoot(process.env.MONGODB!),
+    MongooseModule.forRoot(process.env.MONGODB!, { dbName: 'pokemonsdb' }),
     ServeStaticModule.forRoot({ rootPath: join(__dirname, '..', 'public') }),
     PokemonModule,
     CommonModule,
