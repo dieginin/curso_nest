@@ -1,3 +1,4 @@
+import { AppConfig } from './config/app.config';
 import { CommonModule } from './common/common.module';
 import { ConfigModule } from '@nestjs/config';
 import { Module } from '@nestjs/common';
@@ -9,7 +10,7 @@ import { join } from 'path';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({ load: [AppConfig] }),
     MongooseModule.forRoot(process.env.MONGODB!),
     ServeStaticModule.forRoot({ rootPath: join(__dirname, '..', 'public') }),
     PokemonModule,
