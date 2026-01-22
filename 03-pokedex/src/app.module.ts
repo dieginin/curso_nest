@@ -11,9 +11,7 @@ import { join } from 'path';
   imports: [
     ConfigModule.forRoot(),
     MongooseModule.forRoot(process.env.MONGODB!),
-    ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', 'public'),
-    }),
+    ServeStaticModule.forRoot({ rootPath: join(__dirname, '..', 'public') }),
     PokemonModule,
     CommonModule,
     SeedModule,
