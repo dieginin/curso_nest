@@ -1,5 +1,6 @@
 import { ConfigModule } from '@nestjs/config';
 import { Module } from '@nestjs/common';
+import { ProductsModule } from './products/products.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
@@ -15,6 +16,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       type: 'postgres',
       username: process.env.DB_USERNAME,
     }),
+    ProductsModule,
   ],
 })
 export class AppModule {}
