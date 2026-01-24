@@ -9,5 +9,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
   controllers: [ProductsController],
   providers: [ProductsService],
   imports: [TypeOrmModule.forFeature([Product, ProductImage])],
+  exports: [ProductsService, TypeOrmModule],
 })
 export class ProductsModule {}
