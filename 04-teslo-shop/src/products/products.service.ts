@@ -1,4 +1,3 @@
-import { CreateProductDto } from './dto/create-product.dto';
 import {
   BadRequestException,
   Injectable,
@@ -6,13 +5,13 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common';
-import { UpdateProductDto } from './dto/update-product.dto';
-import { Product } from './entities/product.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { DatabaseError } from 'pg';
-import { PaginationDto } from 'src/common/dtos/pagination.dto';
 import { isUUID } from 'class-validator';
+import { PaginationDto } from 'src/common/dtos';
+import { CreateProductDto, UpdateProductDto } from './dto';
+import { Product } from './entities';
 
 @Injectable()
 export class ProductsService {
