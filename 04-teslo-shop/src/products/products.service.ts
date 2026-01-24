@@ -64,12 +64,28 @@ export class ProductsService {
 
   async findOne(term: string) {
     const isId = isUUID(term);
-    const where = isId ? { id: term } : { slug: term };
+    // const where = isId ? { id: term } : { slug: term };
 
-    const product = await this.productRepository.findOneBy(where);
+    // const product = await this.productRepository.findOneBy(where);
+
+    let product: Product | null = null;
+
+    if (isId) {
+      product = await this.productRepository.findOneBy({ id: term });
+    } else {
+      const queryBuilder = this.productRepository.createQueryBuilder('prod');
+      product = await queryBuilder
+        .where('UPPER(title) =:title or slug =:slug', {
+          title: term.toUpperCase(),
+          slug: term.toLowerCase(),
+        })
+        .leftJoinAndSelect('prod.images', 'prodImages')
+        .getOne();
+    }
+
     if (!product)
       throw new NotFoundException(
-        `No product found with ${isId ? 'id' : 'slug'} ${term}`,
+        `No product found with ${isId ? 'id' : 'slug or title'} ${term}`,
       );
     return product;
   }
