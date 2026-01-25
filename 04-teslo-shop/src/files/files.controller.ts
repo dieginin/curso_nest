@@ -9,6 +9,7 @@ import {
 
 import { FilesService } from './files.service';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
 
 const ImageValidationPipe = new ParseFilePipe({
   validators: [
@@ -24,7 +25,11 @@ export class FilesController {
   constructor(private readonly filesService: FilesService) {}
 
   @Post('product')
-  @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: diskStorage({ destination: './static/uploads' }),
+    }),
+  )
   uploadProductImage(
     @UploadedFile(ImageValidationPipe)
     file: Express.Multer.File,
