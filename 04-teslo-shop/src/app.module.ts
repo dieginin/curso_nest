@@ -1,5 +1,6 @@
 import { CommonModule } from './common/common.module';
 import { ConfigModule } from '@nestjs/config';
+import { FilesModule } from './files/files.module';
 import { Module } from '@nestjs/common';
 import { ProductsModule } from './products/products.module';
 import { SeedModule } from './seed/seed.module';
@@ -21,6 +22,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
     ProductsModule,
     CommonModule,
     SeedModule,
+    FilesModule,
   ],
 })
 export class AppModule {}
