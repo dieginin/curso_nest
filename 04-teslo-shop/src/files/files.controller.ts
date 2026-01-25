@@ -10,8 +10,10 @@ import {
 import { FilesService } from './files.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
+import { fileNamer } from './helpers/fileNamer.helper';
 
 const ImageValidationPipe = new ParseFilePipe({
+  fileIsRequired: true,
   validators: [
     new FileTypeValidator({
       fileType: /^image\/(png|jpeg|jpg|gif)$/,
@@ -27,7 +29,10 @@ export class FilesController {
   @Post('product')
   @UseInterceptors(
     FileInterceptor('file', {
-      storage: diskStorage({ destination: './static/uploads' }),
+      storage: diskStorage({
+        destination: './static/products',
+        filename: fileNamer,
+      }),
     }),
   )
   uploadProductImage(
