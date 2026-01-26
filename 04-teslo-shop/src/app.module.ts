@@ -4,7 +4,9 @@ import { FilesModule } from './files/files.module';
 import { Module } from '@nestjs/common';
 import { ProductsModule } from './products/products.module';
 import { SeedModule } from './seed/seed.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { join } from 'path';
 
 @Module({
   imports: [
@@ -19,6 +21,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       type: 'postgres',
       username: process.env.DB_USERNAME,
     }),
+    ServeStaticModule.forRoot({ rootPath: join(__dirname, '..', 'public') }),
     ProductsModule,
     CommonModule,
     SeedModule,
