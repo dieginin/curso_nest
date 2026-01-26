@@ -1,3 +1,4 @@
+import { AuthModule } from './auth/auth.module';
 import { CommonModule } from './common/common.module';
 import { ConfigModule } from '@nestjs/config';
 import { FilesModule } from './files/files.module';
@@ -26,6 +27,7 @@ import { join } from 'path';
     CommonModule,
     SeedModule,
     FilesModule,
+    AuthModule,
   ],
 })
 export class AppModule {}
