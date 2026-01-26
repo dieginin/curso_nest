@@ -14,8 +14,9 @@ import {
 import { FilesService } from './files.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
-import { fileNamer } from './helpers/fileNamer.helper';
+import { fileFilter, fileNamer } from './helpers';
 import type { Response } from 'express';
+import { ConfigService } from '@nestjs/config';
 
 const ImageValidationPipe = new ParseFilePipe({
   fileIsRequired: true,
@@ -29,11 +30,19 @@ const ImageValidationPipe = new ParseFilePipe({
 
 @Controller('files')
 export class FilesController {
-  constructor(private readonly filesService: FilesService) {}
+  private hostApi?: string;
+
+  constructor(
+    private readonly filesService: FilesService,
+    private readonly configService: ConfigService,
+  ) {
+    this.hostApi = configService.get<string>('HOST_API');
+  }
 
   @Post('product')
   @UseInterceptors(
     FileInterceptor('file', {
+      fileFilter: fileFilter,
       storage: diskStorage({
         destination: './static/products',
         filename: fileNamer,
@@ -41,12 +50,14 @@ export class FilesController {
     }),
   )
   uploadProductImage(
-    @UploadedFile(ImageValidationPipe)
+    // @UploadedFile(ImageValidationPipe)
+    @UploadedFile()
     file: Express.Multer.File,
   ) {
     if (!file) throw new BadRequestException('A file must be attached');
 
-    const secureUrl = `${file.filename}`;
+    // const secureUrl = `${file.filename}`;
+    const secureUrl = `${this.hostApi}/files/product/${file.filename}`;
     return { secureUrl };
   }
 
