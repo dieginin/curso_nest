@@ -1,7 +1,7 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import {
-  BadRequestException,
+  ConflictException,
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common';
@@ -32,9 +32,9 @@ export class AuthService {
     }
   }
 
-  private handleDBErrors(e: any): never {
-    const error = e as DatabaseError;
-    if (error.code === '23505') throw new BadRequestException(error.detail);
+  private handleDBErrors(error: any): never {
+    if ((error as DatabaseError).code === '23505')
+      throw new ConflictException('An user with this email already exists');
 
     console.log(error);
     throw new InternalServerErrorException('Please check server logs');
