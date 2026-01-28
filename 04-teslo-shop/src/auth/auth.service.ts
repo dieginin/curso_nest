@@ -34,7 +34,7 @@ export class AuthService {
       const { password: _, ...userWithoutPassword } = user;
       return {
         ...userWithoutPassword,
-        token: this.getJwt({ email: user.email }),
+        token: this.getJwt({ id: user.id }),
       };
     } catch (error) {
       this.handleDBErrors(error);
@@ -46,13 +46,13 @@ export class AuthService {
 
     const user = await this.userRepository.findOne({
       where: { email },
-      select: { email: true, password: true },
+      select: { id: true, email: true, password: true },
     });
 
     if (!user || !compareSync(password, user.password))
       throw new UnauthorizedException('Wrong credentials');
 
-    return { ...user, token: this.getJwt({ email: user.email }) };
+    return { ...user, token: this.getJwt({ id: user.id }) };
   }
 
   private getJwt(payload: JwtPayload) {
