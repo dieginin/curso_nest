@@ -1,7 +1,14 @@
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import {
+  CanActivate,
+  ExecutionContext,
+  ForbiddenException,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 
 import { Observable } from 'rxjs';
 import { Reflector } from '@nestjs/core';
+import { User } from '../entities/user.entity';
 
 @Injectable()
 export class UserRoleGuard implements CanActivate {
@@ -14,8 +21,14 @@ export class UserRoleGuard implements CanActivate {
       'roles',
       context.getHandler(),
     );
+    const request: Express.Request = context.switchToHttp().getRequest();
+    const user = request.user as User | undefined;
 
-    console.log(validRoles);
+    if (!user) throw new InternalServerErrorException('User not found (guard)');
+
+    if (!user.roles.some((role) => validRoles.includes(role)))
+      throw new ForbiddenException(`User ${user.fullName} needs a valid role`);
+
     return true;
   }
 }
