@@ -6,6 +6,7 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 
+import { META_ROLES } from '../decorators/role-protected.decorator';
 import { Observable } from 'rxjs';
 import { Reflector } from '@nestjs/core';
 import { User } from '../entities/user.entity';
@@ -18,7 +19,7 @@ export class UserRoleGuard implements CanActivate {
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
     const validRoles: string[] = this.reflector.get(
-      'roles',
+      META_ROLES,
       context.getHandler(),
     );
     const request: Express.Request = context.switchToHttp().getRequest();
@@ -27,7 +28,9 @@ export class UserRoleGuard implements CanActivate {
     if (!user) throw new InternalServerErrorException('User not found (guard)');
 
     if (!user.roles.some((role) => validRoles.includes(role)))
-      throw new ForbiddenException(`User ${user.fullName} needs a valid role`);
+      throw new ForbiddenException(
+        `User ${user.fullName} needs a valid role: [${validRoles.join(', ')}]`,
+      );
 
     return true;
   }
