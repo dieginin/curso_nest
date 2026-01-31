@@ -8,10 +8,11 @@ export const connectToServer = () => {
 }
 
 const addListeners = (socket: Socket) => {
-  const serverStatusLabel = document.querySelector("#server-status")!
-  const clientsUl = document.querySelector("#clients-ul")!
+  const clientsUl = document.querySelector<HTMLUListElement>("#clients-ul")!
   const messageForm = document.querySelector<HTMLFormElement>("#message-form")!
   const messageInput = document.querySelector<HTMLInputElement>("#message-input")!
+  const messagesUl = document.querySelector<HTMLUListElement>("#messages-ul")!
+  const serverStatusLabel = document.querySelector("#server-status")!
 
   socket.on("connect", () => (serverStatusLabel.innerHTML = "Online"))
   socket.on("disconnect", () => (serverStatusLabel.innerHTML = "Offline"))
@@ -21,7 +22,7 @@ const addListeners = (socket: Socket) => {
     clients.forEach(client => {
       const li = document.createElement("li")
       li.innerText = client
-      clientsUl.appendChild(li)
+      clientsUl.append(li)
     })
 
     messageForm.addEventListener("submit", event => {
@@ -29,6 +30,18 @@ const addListeners = (socket: Socket) => {
       if (messageInput.value.trim().length <= 0) return
 
       socket.emit("message-form-client", { id: "yo", message: messageInput.value }, (messageInput.value = ""))
+    })
+
+    socket.on("message-from-server", (payload: { fullName: string; message: string }) => {
+      const li = document.createElement("li")
+      const strong = document.createElement("strong")
+      const span = document.createElement("span")
+
+      strong.innerText = payload.fullName
+      span.innerText = `: ${payload.message}`
+      li.append(strong)
+      li.append(span)
+      messagesUl.append(li)
     })
   })
 }
