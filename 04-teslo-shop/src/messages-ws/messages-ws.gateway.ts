@@ -23,19 +23,17 @@ export class MessagesWsGateway
     private readonly jwtService: JwtService,
   ) {}
 
-  handleConnection(client: Socket) {
+  async handleConnection(client: Socket) {
     const token = client.handshake.headers.authentication as string;
     let payload: JwtPayload;
 
     try {
       payload = this.jwtService.verify(token);
+      await this.messagesWsService.registerClient(client, payload.id);
     } catch {
       client.disconnect();
       return;
     }
-    console.log(payload);
-
-    this.messagesWsService.registerClient(client);
 
     this.wss.emit(
       'clients-updated',
@@ -68,7 +66,7 @@ export class MessagesWsGateway
 
     //! Emite a TODOS
     this.wss.emit('message-from-server', {
-      fullName: 'Soy yo',
+      fullName: this.messagesWsService.getUserFullName(client.id),
       message: payload[0].message || 'No message',
     });
   }
